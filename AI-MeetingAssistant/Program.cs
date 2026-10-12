@@ -1,4 +1,6 @@
 
+using AI_MeetingAssistant.Services;
+
 namespace AI_MeetingAssistant
 {
     public class Program
@@ -10,6 +12,7 @@ namespace AI_MeetingAssistant
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddHttpClient<GeminiService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
