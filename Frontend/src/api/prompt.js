@@ -1,4 +1,4 @@
-const API_URL = "https://localhost:7102";
+const API_URL = "https://localhost:7102/api/ai";
 
 async function post(endpoint, body) {
     const res = await fetch(`${API_URL}${endpoint}`, {
@@ -8,20 +8,21 @@ async function post(endpoint, body) {
     });
 
     if (!res.ok) {
-        throw new Error(`Error ${res.status}`);
+        const errText = await res.text();
+        throw new Error(`Error ${res.status}: ${errText}`);
     }
 
     return res.json();
 }
 
-export function createAgenda(userPrompt) {
-    return post("/agenda", { userPrompt });
+export function createAgenda(inputPrompt) {
+    return post("/agenda", { inputPrompt });
 }
 
-export function createSummary(userPrompt) {
-    return post("/summarize", { userPrompt });
+export function createSummary(inputPrompt) {
+    return post("/summarize", { inputPrompt });
 }
 
-export function createInvite(userPrompt) {
-    return post("/invite", { userPrompt });
+export function createInvite(inputPrompt) {
+    return post("/invitation", { inputPrompt });
 }

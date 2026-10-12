@@ -1,4 +1,3 @@
-
 using AI_MeetingAssistant.Services;
 
 namespace AI_MeetingAssistant
@@ -9,17 +8,26 @@ namespace AI_MeetingAssistant
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
+
+            // 1. Configure the CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173") // Verify this matches your browser address bar exactly!
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddHttpClient<GeminiService>();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure Swagger
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -27,10 +35,11 @@ namespace AI_MeetingAssistant
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();
+
+            app.UseCors("AllowFrontend");
 
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

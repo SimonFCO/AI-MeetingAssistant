@@ -3,70 +3,61 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AI_MeetingAssistant.Controllers
 {
+    public record PromptRequest(string InputPrompt);
+
     [ApiController]
     [Route("api/ai")]
     public class GeminiController : ControllerBase
     {
         private readonly GeminiService _geminiService;
 
-        public GeminiController(
-            GeminiService geminiService)
+        public GeminiController(GeminiService geminiService)
         {
             _geminiService = geminiService;
         }
 
         [HttpPost("summarize")]
-        public async Task<IActionResult> summarize(string inputPrompt)
+        public async Task<IActionResult> summarize([FromBody] PromptRequest request)
         {
-            if (string.IsNullOrWhiteSpace(inputPrompt))
+            if (string.IsNullOrWhiteSpace(request?.InputPrompt))
             {
                 return BadRequest("Måste innehålla någon text.");
             }
 
             const string systemPrompt = "Du är en Ai som har som uppdrag att summera ett möte som ett proffs :), all text efter detta är det du ska summera:";
+            string prompt = systemPrompt + request.InputPrompt;
 
-            string prompt = systemPrompt + inputPrompt;
-
-            var result = await _geminiService
-                .SummariseMeeting(prompt);
-
+            var result = await _geminiService.SummariseMeeting(prompt);
             return Ok(result);
         }
 
         [HttpPost("agenda")]
-        public async Task<IActionResult> agenda(string inputPrompt)
+        public async Task<IActionResult> agenda([FromBody] PromptRequest request)
         {
-
-            if (string.IsNullOrWhiteSpace(inputPrompt))
+            if (string.IsNullOrWhiteSpace(request?.InputPrompt))
             {
                 return BadRequest("Måste innehålla någon text.");
             }
 
             const string systemPrompt = "Du är en Ai som har som uppdrag att skapa en agenda inför ett möte som ett proffs :), all text efter detta är det du ska använda:";
+            string prompt = systemPrompt + request.InputPrompt;
 
-            string prompt = systemPrompt + inputPrompt;
-
-            var result = await _geminiService
-                .CreateAgenda(prompt);
-
+            var result = await _geminiService.CreateAgenda(prompt);
             return Ok(result);
         }
 
         [HttpPost("invitation")]
-        public async Task<IActionResult> invitation(string inputPrompt)
+        public async Task<IActionResult> invitation([FromBody] PromptRequest request)
         {
-            if (string.IsNullOrWhiteSpace(inputPrompt))
+            if (string.IsNullOrWhiteSpace(request?.InputPrompt))
             {
                 return BadRequest("Måste innehålla någon text.");
             }
 
             const string systemPrompt = "Du är en Ai som har som uppdrag att skapa en proffesionel inbjudan till ett möte :), all text efter detta är det du ska använda:";
+            string prompt = systemPrompt + request.InputPrompt;
 
-            string prompt = systemPrompt + inputPrompt;
-
-            var result = await _geminiService
-                .WriteAProffesionalInvite(prompt);
-
+            var result = await _geminiService.WriteAProffesionalInvite(prompt);
             return Ok(result);
         }
     }
