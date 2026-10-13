@@ -21,7 +21,10 @@ namespace AI_MeetingAssistant
                 });
             });
 
-            builder.Services.AddHttpClient<GeminiService>();
+            builder.Services.AddHttpClient<GeminiService>(client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(3);
+            });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

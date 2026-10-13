@@ -28,7 +28,7 @@ namespace AI_MeetingAssistant.Controllers
             string prompt = systemPrompt + request.InputPrompt;
 
             var result = await _geminiService.SummariseMeeting(prompt);
-            return Ok(result);
+            return Ok(new { result });
         }
 
         [HttpPost("agenda")]
@@ -43,7 +43,7 @@ namespace AI_MeetingAssistant.Controllers
             string prompt = systemPrompt + request.InputPrompt;
 
             var result = await _geminiService.CreateAgenda(prompt);
-            return Ok(result);
+            return Ok(new { result });
         }
 
         [HttpPost("invitation")]
@@ -58,7 +58,7 @@ namespace AI_MeetingAssistant.Controllers
             string prompt = systemPrompt + request.InputPrompt;
 
             var result = await _geminiService.WriteAProffesionalInvite(prompt);
-            return Ok(result);
+            return Ok(new { result });
         }
     }
 }

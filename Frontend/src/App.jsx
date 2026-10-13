@@ -3,7 +3,6 @@ import Header from "./Components/Header";
 import TabNavigation from "./Components/TabNavigation";
 import MeetingForm from "./Components/InputForm";
 import ResultDisplay from "./Components/ResultDisplay";
-import Footer from "./Components/Bottom";
 
 function App() {
   return (
@@ -14,7 +13,6 @@ function App() {
         <MeetingForm />
         <ResultDisplay />
       </section>
-      <Footer />
     </main>
   );
 }
