@@ -1,32 +1,22 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
-import { createAgenda } from './api/prompt.js'
+import "./App.css";
+import Header from "./Components/Header";
+import TabNavigation from "./Components/TabNavigation";
+import MeetingForm from "./Components/InputForm";
+import ResultDisplay from "./Components/ResultDisplay";
+import Footer from "./Components/Bottom";
 
 function App() {
-  const [message, setMessage] = useState("Hello World!");
-
-  const handleClick = async () => {
-    try {
-      const data = await createAgenda("hi");
-      // If your API returns an object (e.g. { message: "..." }), use data.message
-      setMessage(typeof data === 'string' ? data : JSON.stringify(data));
-    } catch (err) {
-      console.error("API error:", err);
-      setMessage("Failed to load data");
-    }
-  };
-
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>{message}</h1>
-      <button onClick={handleClick}>
-        Click Me!
-      </button>
-    </div>
+    <main className="app-container">
+      <Header />
+      <TabNavigation />
+      <section className="card">
+        <MeetingForm />
+        <ResultDisplay />
+      </section>
+      <Footer />
+    </main>
   );
 }
 
-export default App; App;
+export default App;
