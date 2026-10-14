@@ -1,6 +1,6 @@
 // Detta är formen man skriver in vad man vill skicka till ai
 // Jag tänker att man kommer kunna skriva in titel, datum, sen basic information
-
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setInputPrompt, generateAiContent } from "../store/meetingSlice";
 
@@ -23,13 +23,33 @@ export default function MeetingForm() {
     (state) => state.meeting,
   );
 
+  // för datum och titel
+  const [titel, setTitel] = useState("");
+  const [datum, setDatum] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(generateAiContent());
+    dispatch(generateAiContent({ titel, datum }));
   };
 
   return (
     <form onSubmit={handleSubmit} className="meeting-form">
+      <textarea
+        className="input-textarea"
+        rows="1"
+        value={titel}
+        onChange={(e) => setTitel(e.target.value)}
+        placeholder={"Titel"}
+        disabled={loading}
+      />
+      <textarea
+        className="input-textarea"
+        rows="1"
+        value={datum}
+        onChange={(e) => setDatum(e.target.value)}
+        placeholder={"Datum"}
+        disabled={loading}
+      />
       <textarea
         className="input-textarea"
         rows="6"

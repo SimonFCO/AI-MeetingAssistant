@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.Drawing;
+using System.Net;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace AI_MeetingAssistant.Services
 {
@@ -17,6 +20,11 @@ namespace AI_MeetingAssistant.Services
 
         private async Task<string> CallGeminiAsync(string prompt)
         {
+            // This will be true when a request succeeds
+            bool success = false;
+
+            string[] aiModels = {"gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite" };
+
             var apiKey = _configuration["Gemini:ApiKey"];
 
             var requestBody = new
@@ -30,20 +38,53 @@ namespace AI_MeetingAssistant.Services
                             new { text = prompt }
                         }
                     }
+                },
+                generationConfig = new
+                {
+                    thinkingConfig = new
+                    {
+                        thinkingLevel = "LOW"
+                    }
                 }
             };
-
             var response = await _httpClient.PostAsJsonAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key={apiKey}",
-                requestBody);
+            $"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key={apiKey}",
+            requestBody);
 
             var rawJson = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
+            int loops = 1;
+            while (success != true)
             {
-                throw new Exception($"Gemini API fel ({response.StatusCode}): {rawJson}");
-            }
+          
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                    {
 
+                        Console.WriteLine($"[DEBUG]:{aiModels[loops]}  var redan använd testar en annan");
+                        response = await _httpClient.PostAsJsonAsync(
+                        $"https://generativelanguage.googleapis.com/v1beta/models/{aiModels[loops]}:generateContent?key={apiKey}",
+                        requestBody);
+
+                        rawJson = await response.Content.ReadAsStringAsync();
+                        loops++;
+                        if(loops == 5)
+                        {
+                            loops = 0;
+                        }
+                        await Task.Delay(10000);
+                    }
+                    else
+                    {
+                        throw new Exception($"Gemini API fel ({response.StatusCode}): {rawJson}");
+                    }
+                }else
+                {
+                    success = true;
+                }
+            }
+            loops = 0;
+           
             using var doc = JsonDocument.Parse(rawJson);
             try
             {
