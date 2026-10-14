@@ -23,7 +23,7 @@ namespace AI_MeetingAssistant
 
             builder.Services.AddHttpClient<GeminiService>(client =>
             {
-                client.Timeout = TimeSpan.FromMinutes(3);
+                client.Timeout = TimeSpan.FromMinutes(10);
             });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

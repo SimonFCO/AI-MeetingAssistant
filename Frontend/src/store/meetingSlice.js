@@ -3,21 +3,33 @@ import { createSummary, createAgenda, createInvite } from "../api/prompt";
 
 export const generateAiContent = createAsyncThunk(
   "meeting/generateContent",
-  async (_, { getState, rejectWithValue }) => {
+  async ({ titel, datum }, { getState, rejectWithValue }) => {
     const { activeTab, inputPrompt } = getState().meeting;
 
     if (!inputPrompt.trim()) {
       return rejectWithValue("Textfältet får inte vara tomt.");
     }
 
+    const fullPrompt = `
+    VIKTIGA REGLER:
+    1. Om en titel är angiven nedan MÅSTE du använda EXAKT den titeln ordagrant. Hitta ALDRIG på en egen titel.
+    2. Använd exakt det angivna datumet.
+
+    Titel: ${titel || "Ingen angiven"}
+    Datum: ${datum || "Inget angivet"}
+
+    Anteckningar att sammanfatta:
+    ${inputPrompt}
+    `;
+
     try {
       let response;
       if (activeTab === "summarize") {
-        response = await createSummary(inputPrompt);
+        response = await createSummary(fullPrompt);
       } else if (activeTab === "agenda") {
-        response = await createAgenda(inputPrompt);
+        response = await createAgenda(fullPrompt);
       } else if (activeTab === "invitation") {
-        response = await createInvite(inputPrompt);
+        response = await createInvite(fullPrompt);
       }
 
       if (typeof response === "object" && response !== null) {

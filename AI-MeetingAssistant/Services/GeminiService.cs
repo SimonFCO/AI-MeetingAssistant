@@ -53,7 +53,7 @@ namespace AI_MeetingAssistant.Services
 
             var rawJson = await response.Content.ReadAsStringAsync();
             int loops = 1;
-            while (success != true)
+            foreach(var model in aiModels)
             {
           
                 if (!response.IsSuccessStatusCode)
@@ -61,9 +61,9 @@ namespace AI_MeetingAssistant.Services
                     if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
                     {
 
-                        Console.WriteLine($"[DEBUG]:{aiModels[loops]}  var redan använd testar en annan");
+                        Console.WriteLine($"[DEBUG]:{model}  var redan använd testar en annan");
                         response = await _httpClient.PostAsJsonAsync(
-                        $"https://generativelanguage.googleapis.com/v1beta/models/{aiModels[loops]}:generateContent?key={apiKey}",
+                        $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}",
                         requestBody);
 
                         rawJson = await response.Content.ReadAsStringAsync();
